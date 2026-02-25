@@ -1,0 +1,7 @@
+[
+  { "name": "rock", "count": 1234, "url": "https://www.last.fm/tag/rock" },
+  { "name": "indie", "count": 980, "url": "https://www.last.fm/tag/indie" },
+  { "name": "electronic", "count": 754, "url": "https://www.last.fm/tag/electronic" },
+  { "name": "pop", "count": 620, "url": "https://www.last.fm/tag/pop" },
+  { "name": "jazz", "count": 410, "url": "https://www.last.fm/tag/jazz" }
+]
