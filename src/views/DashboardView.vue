@@ -1,12 +1,24 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import GenreBreakdownWidget from '@/components/widgets/GenreBreakdownWidget.vue'
+import TopArtistsWidget from '@/components/widgets/TopArtistsWidget.vue'
+import RecentTracksWidget from '@/components/widgets/RecentTracksWidget.vue'
+import YouMightLikeWidget from '@/components/widgets/YouMightLikeWidget.vue'
 import { useGenresStore } from '@/stores/genres'
+import { useArtistsStore } from '@/stores/artists'
+import { useRecentTracksStore } from '@/stores/recentTracks'
+import { useDiscoveryStore } from '@/stores/discovery'
 
 const genresStore = useGenresStore()
+const artistsStore = useArtistsStore()
+const recentTracksStore = useRecentTracksStore()
+const discoveryStore = useDiscoveryStore()
 
 onMounted(() => {
   genresStore.fetchTopGenres()
+  artistsStore.fetchTopArtists()
+  recentTracksStore.fetchRecentTracks()
+  discoveryStore.fetchSuggestedArtists()
 })
 </script>
 
@@ -19,6 +31,9 @@ onMounted(() => {
 
     <div class="widget-grid">
       <GenreBreakdownWidget />
+      <TopArtistsWidget />
+      <RecentTracksWidget />
+      <YouMightLikeWidget />
     </div>
   </main>
 </template>

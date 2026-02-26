@@ -37,7 +37,7 @@ describe('GenreBreakdownWidget', () => {
     const wrapper = mount(GenreBreakdownWidget, {
       global: {
         plugins: [
-          createTestingPinia({
+          createTestingPinia({ createSpy: vi.fn,
             initialState: { genres: { genres: [], loading: true, error: null } },
           }),
         ],
@@ -52,7 +52,7 @@ describe('GenreBreakdownWidget', () => {
     const wrapper = mount(GenreBreakdownWidget, {
       global: {
         plugins: [
-          createTestingPinia({
+          createTestingPinia({ createSpy: vi.fn,
             initialState: {
               genres: { genres: [], loading: false, error: 'Network error' },
             },
@@ -69,7 +69,7 @@ describe('GenreBreakdownWidget', () => {
     const wrapper = mount(GenreBreakdownWidget, {
       global: {
         plugins: [
-          createTestingPinia({
+          createTestingPinia({ createSpy: vi.fn,
             initialState: { genres: { genres: [], loading: false, error: null } },
           }),
         ],
@@ -83,7 +83,7 @@ describe('GenreBreakdownWidget', () => {
     const wrapper = mount(GenreBreakdownWidget, {
       global: {
         plugins: [
-          createTestingPinia({
+          createTestingPinia({ createSpy: vi.fn,
             initialState: {
               genres: { genres: mockTags, loading: false, error: null },
             },
@@ -100,7 +100,7 @@ describe('GenreBreakdownWidget', () => {
     const wrapper = mount(GenreBreakdownWidget, {
       global: {
         plugins: [
-          createTestingPinia({
+          createTestingPinia({ createSpy: vi.fn,
             initialState: { genres: { genres: [], loading: false, error: null } },
           }),
         ],

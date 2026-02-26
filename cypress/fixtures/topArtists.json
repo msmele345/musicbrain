@@ -1,0 +1,7 @@
+[
+  { "name": "Radiohead", "playcount": "1500", "url": "https://www.last.fm/music/Radiohead", "imageUrl": "https://img.last.fm/radiohead.jpg" },
+  { "name": "Portishead", "playcount": "800", "url": "https://www.last.fm/music/Portishead", "imageUrl": null },
+  { "name": "Massive Attack", "playcount": "650", "url": "https://www.last.fm/music/Massive+Attack", "imageUrl": null },
+  { "name": "Thom Yorke", "playcount": "420", "url": "https://www.last.fm/music/Thom+Yorke", "imageUrl": null },
+  { "name": "PJ Harvey", "playcount": "310", "url": "https://www.last.fm/music/PJ+Harvey", "imageUrl": null }
+]
