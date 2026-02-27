@@ -1,0 +1,6 @@
+[
+  { "name": "Fake Plastic Trees", "artist": "Radiohead", "album": "The Bends", "timestamp": null, "nowPlaying": true },
+  { "name": "Glory Box", "artist": "Portishead", "album": "Dummy", "timestamp": "14 Nov 2023, 20:00", "nowPlaying": false },
+  { "name": "Unfinished Sympathy", "artist": "Massive Attack", "album": "Blue Lines", "timestamp": "14 Nov 2023, 19:45", "nowPlaying": false },
+  { "name": "Teardrop", "artist": "Massive Attack", "album": "Mezzanine", "timestamp": "14 Nov 2023, 19:30", "nowPlaying": false }
+]

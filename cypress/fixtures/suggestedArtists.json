@@ -1,0 +1,6 @@
+[
+  { "name": "Massive Attack", "match": 0.87, "url": "https://www.last.fm/music/Massive+Attack", "imageUrl": "https://img.last.fm/massive-attack.jpg" },
+  { "name": "Tricky", "match": 0.72, "url": "https://www.last.fm/music/Tricky", "imageUrl": null },
+  { "name": "Burial", "match": 0.65, "url": "https://www.last.fm/music/Burial", "imageUrl": null },
+  { "name": "Flying Lotus", "match": 0.58, "url": "https://www.last.fm/music/Flying+Lotus", "imageUrl": null }
+]
