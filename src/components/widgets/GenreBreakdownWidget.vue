@@ -22,11 +22,8 @@ onMounted(() => {
 })
 
 const PALETTE = [
-  '#6366f1', '#8b5cf6', '#ec4899', '#f43f5e', '#f97316',
-  '#eab308', '#22c55e', '#14b8a6', '#06b6d4', '#3b82f6',
-  '#a855f7', '#e11d48', '#fb923c', '#facc15', '#4ade80',
-  '#2dd4bf', '#38bdf8', '#818cf8', '#c084fc', '#f472b6',
-  '#fb7185', '#fdba74', '#fde047', '#86efac', '#67e8f9',
+  '#d4a543', '#c4687a', '#7b6cf6', '#5fa88e', '#d49a6a',
+  '#8892a4', '#b8945f', '#9b6ec4', '#6a9fb5', '#c79a8d',
 ]
 
 const chartData = computed<ChartData<'doughnut'>>(() => ({
@@ -36,7 +33,10 @@ const chartData = computed<ChartData<'doughnut'>>(() => ({
       data: store.genres.map((g) => g.count),
       backgroundColor: store.genres.map((_, i) => PALETTE[i % PALETTE.length]),
       borderWidth: 2,
-      borderColor: '#1e1e2e',
+      borderColor: '#111118',
+      hoverBorderColor: '#111118',
+      hoverBorderWidth: 3,
+      hoverOffset: 6,
     },
   ],
 }))
@@ -44,16 +44,28 @@ const chartData = computed<ChartData<'doughnut'>>(() => ({
 const chartOptions = computed<ChartOptions<'doughnut'>>(() => ({
   responsive: true,
   maintainAspectRatio: false,
+  cutout: '62%',
   plugins: {
     legend: {
       position: 'right',
       labels: {
-        color: '#cdd6f4',
-        font: { size: 12 },
-        padding: 12,
+        color: '#8892a4',
+        font: { size: 11, family: 'DM Sans' },
+        padding: 10,
+        usePointStyle: true,
+        pointStyleWidth: 8,
       },
     },
     tooltip: {
+      backgroundColor: '#1a1a24',
+      titleColor: '#e8e6e1',
+      bodyColor: '#8892a4',
+      borderColor: 'rgba(255,255,255,0.06)',
+      borderWidth: 1,
+      cornerRadius: 8,
+      padding: 10,
+      titleFont: { family: 'DM Sans' },
+      bodyFont: { family: 'DM Sans' },
       callbacks: {
         label: (ctx) => ` ${ctx.label}: ${ctx.parsed.toLocaleString()} plays`,
       },
@@ -82,10 +94,11 @@ const chartOptions = computed<ChartOptions<'doughnut'>>(() => ({
 
 <style scoped>
 .widget {
-  background: #1e1e2e;
-  border-radius: 12px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
   padding: 1.5rem;
-  color: #cdd6f4;
+  color: var(--text-primary);
   min-height: 320px;
   display: flex;
   flex-direction: column;
@@ -93,9 +106,10 @@ const chartOptions = computed<ChartOptions<'doughnut'>>(() => ({
 }
 
 .widget-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #cba6f7;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: var(--text-primary);
   margin: 0;
 }
 
@@ -108,10 +122,10 @@ const chartOptions = computed<ChartOptions<'doughnut'>>(() => ({
 .skeleton {
   flex: 1;
   min-height: 260px;
-  background: linear-gradient(90deg, #313244 25%, #45475a 50%, #313244 75%);
+  background: linear-gradient(90deg, var(--bg-raised) 25%, var(--bg-hover) 50%, var(--bg-raised) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 }
 
 @keyframes shimmer {
@@ -120,15 +134,17 @@ const chartOptions = computed<ChartOptions<'doughnut'>>(() => ({
 }
 
 .error {
-  color: #f38ba8;
+  color: var(--accent-rose);
   padding: 1rem;
-  border: 1px solid #f38ba8;
-  border-radius: 8px;
+  border: 1px solid var(--accent-rose);
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
 }
 
 .empty {
-  color: #6c7086;
+  color: var(--text-muted);
   text-align: center;
   padding: 2rem;
+  font-size: 0.85rem;
 }
 </style>

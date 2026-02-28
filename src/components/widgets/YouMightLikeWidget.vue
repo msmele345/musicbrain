@@ -15,7 +15,10 @@ function matchPercent(match: number): string {
 
 <template>
   <div class="widget">
-    <h2 class="widget-title">You Might Like</h2>
+    <div class="widget-header">
+      <h2 class="widget-title">You Might Like</h2>
+      <span class="widget-label">Discovery</span>
+    </div>
 
     <div v-if="store.loading" class="skeleton" aria-label="Loading suggested artists..." />
 
@@ -27,12 +30,13 @@ function matchPercent(match: number): string {
 
     <div v-else class="card-grid">
       <a
-        v-for="artist in store.suggestedArtists"
+        v-for="(artist, index) in store.suggestedArtists"
         :key="artist.name"
         :href="artist.url"
         target="_blank"
         rel="noopener noreferrer"
         class="artist-card"
+        :style="{ animationDelay: `${0.4 + index * 0.06}s` }"
         :aria-label="`${artist.name} — ${matchPercent(artist.match)} match`"
       >
         <div class="artist-image-wrapper">
@@ -48,7 +52,12 @@ function matchPercent(match: number): string {
         </div>
         <div class="artist-details">
           <div class="artist-name">{{ artist.name }}</div>
-          <div class="artist-match">{{ matchPercent(artist.match) }} match</div>
+          <div class="artist-match">
+            <span class="match-bar-track">
+              <span class="match-bar-fill" :style="{ width: matchPercent(artist.match) }" />
+            </span>
+            <span class="match-text">{{ matchPercent(artist.match) }} match</span>
+          </div>
         </div>
       </a>
     </div>
@@ -57,26 +66,45 @@ function matchPercent(match: number): string {
 
 <style scoped>
 .widget {
-  background: #1e1e2e;
-  border-radius: 12px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
   padding: 1.5rem;
-  color: #cdd6f4;
-  min-height: 320px;
+  color: var(--text-primary);
+  min-height: 200px;
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
+.widget-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
 .widget-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #cba6f7;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: var(--text-primary);
   margin: 0;
+}
+
+.widget-label {
+  font-size: 0.65rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent-indigo);
+  border: 1px solid rgba(123, 108, 246, 0.25);
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--radius-sm);
 }
 
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   gap: 0.75rem;
 }
 
@@ -84,26 +112,41 @@ function matchPercent(match: number): string {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem;
-  background: #181825;
-  border-radius: 10px;
+  gap: 0.6rem;
+  padding: 1rem 0.75rem;
+  background: var(--bg-raised);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
   text-decoration: none;
   color: inherit;
-  transition: background 0.15s, transform 0.15s;
+  transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+  animation: fadeSlideIn 0.5s ease-out both;
 }
 
 .artist-card:hover {
-  background: #313244;
-  transform: translateY(-2px);
+  border-color: var(--border-accent);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .artist-image-wrapper {
-  width: 64px;
-  height: 64px;
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
   overflow: hidden;
   flex-shrink: 0;
+  border: 2px solid var(--border-subtle);
 }
 
 .artist-image {
@@ -115,40 +158,66 @@ function matchPercent(match: number): string {
 .artist-image-placeholder {
   width: 100%;
   height: 100%;
-  background: #313244;
+  background: linear-gradient(135deg, var(--bg-hover), var(--bg-surface));
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #6366f1;
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  color: var(--accent-gold);
   text-transform: uppercase;
 }
 
 .artist-details {
   text-align: center;
+  width: 100%;
 }
 
 .artist-name {
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   font-weight: 500;
   line-height: 1.3;
   word-break: break-word;
 }
 
 .artist-match {
-  font-size: 0.7rem;
-  color: #a6e3a1;
-  margin-top: 2px;
+  margin-top: 0.35rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.match-bar-track {
+  width: 100%;
+  max-width: 80px;
+  height: 3px;
+  background: var(--bg-hover);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.match-bar-fill {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-gold), var(--accent-rose));
+  border-radius: 2px;
+  transition: width 0.6s ease-out;
+}
+
+.match-text {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  letter-spacing: 0.03em;
 }
 
 .skeleton {
   flex: 1;
-  min-height: 260px;
-  background: linear-gradient(90deg, #313244 25%, #45475a 50%, #313244 75%);
+  min-height: 120px;
+  background: linear-gradient(90deg, var(--bg-raised) 25%, var(--bg-hover) 50%, var(--bg-raised) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 }
 
 @keyframes shimmer {
@@ -157,15 +226,17 @@ function matchPercent(match: number): string {
 }
 
 .error {
-  color: #f38ba8;
+  color: var(--accent-rose);
   padding: 1rem;
-  border: 1px solid #f38ba8;
-  border-radius: 8px;
+  border: 1px solid var(--accent-rose);
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
 }
 
 .empty {
-  color: #6c7086;
+  color: var(--text-muted);
   text-align: center;
   padding: 2rem;
+  font-size: 0.85rem;
 }
 </style>

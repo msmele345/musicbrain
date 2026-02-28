@@ -40,8 +40,13 @@ const chartData = computed<ChartData<'bar'>>(() => ({
     {
       label: 'Play count',
       data: store.artists.map((a) => parseInt(a.playcount, 10) || 0),
-      backgroundColor: '#6366f1',
-      borderRadius: 4,
+      backgroundColor: (ctx: { dataIndex: number }) => {
+        const colors = ['#d4a543', '#c4687a', '#7b6cf6', '#5fa88e', '#d4a543', '#c4687a', '#7b6cf6', '#5fa88e', '#d4a543', '#c4687a']
+        return colors[ctx.dataIndex % colors.length]
+      },
+      borderRadius: 3,
+      borderSkipped: false,
+      barThickness: 18,
     },
   ],
 }))
@@ -53,19 +58,30 @@ const chartOptions = computed<ChartOptions<'bar'>>(() => ({
   plugins: {
     legend: { display: false },
     tooltip: {
+      backgroundColor: '#1a1a24',
+      titleColor: '#e8e6e1',
+      bodyColor: '#8892a4',
+      borderColor: 'rgba(255,255,255,0.06)',
+      borderWidth: 1,
+      cornerRadius: 8,
+      padding: 10,
+      titleFont: { family: 'DM Sans' },
+      bodyFont: { family: 'DM Sans' },
       callbacks: {
-        label: (ctx) => ` ${ctx.parsed.x.toLocaleString()} plays`,
+        label: (ctx) => ` ${ctx.parsed.x?.toLocaleString() ?? ''} plays`,
       },
     },
   },
   scales: {
     x: {
-      ticks: { color: '#6c7086' },
-      grid: { color: '#313244' },
+      ticks: { color: '#555d6e', font: { family: 'DM Sans', size: 11 } },
+      grid: { color: 'rgba(255,255,255,0.04)' },
+      border: { display: false },
     },
     y: {
-      ticks: { color: '#cdd6f4' },
+      ticks: { color: '#e8e6e1', font: { family: 'DM Sans', size: 12 } },
       grid: { display: false },
+      border: { display: false },
     },
   },
 }))
@@ -105,10 +121,11 @@ const chartOptions = computed<ChartOptions<'bar'>>(() => ({
 
 <style scoped>
 .widget {
-  background: #1e1e2e;
-  border-radius: 12px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
   padding: 1.5rem;
-  color: #cdd6f4;
+  color: var(--text-primary);
   min-height: 320px;
   display: flex;
   flex-direction: column;
@@ -117,40 +134,49 @@ const chartOptions = computed<ChartOptions<'bar'>>(() => ({
 
 .widget-header {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 0.5rem;
 }
 
 .widget-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #cba6f7;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: var(--text-primary);
   margin: 0;
 }
 
 .period-tabs {
   display: flex;
-  gap: 0.25rem;
+  gap: 2px;
+  background: var(--bg-raised);
+  border-radius: var(--radius-sm);
+  padding: 2px;
 }
 
 .tab {
   background: transparent;
-  border: 1px solid #313244;
-  border-radius: 6px;
-  color: #6c7086;
+  border: none;
+  border-radius: 4px;
+  color: var(--text-muted);
   cursor: pointer;
-  font-size: 0.75rem;
-  padding: 0.25rem 0.6rem;
-  transition: all 0.15s;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 500;
+  padding: 0.3rem 0.65rem;
+  transition: all 0.2s;
+  letter-spacing: 0.02em;
 }
 
-.tab.active,
 .tab:hover {
-  background: #313244;
-  border-color: #6366f1;
-  color: #cdd6f4;
+  color: var(--text-secondary);
+}
+
+.tab.active {
+  background: var(--bg-hover);
+  color: var(--accent-gold);
 }
 
 .chart-container {
@@ -162,10 +188,10 @@ const chartOptions = computed<ChartOptions<'bar'>>(() => ({
 .skeleton {
   flex: 1;
   min-height: 260px;
-  background: linear-gradient(90deg, #313244 25%, #45475a 50%, #313244 75%);
+  background: linear-gradient(90deg, var(--bg-raised) 25%, var(--bg-hover) 50%, var(--bg-raised) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 }
 
 @keyframes shimmer {
@@ -174,15 +200,17 @@ const chartOptions = computed<ChartOptions<'bar'>>(() => ({
 }
 
 .error {
-  color: #f38ba8;
+  color: var(--accent-rose);
   padding: 1rem;
-  border: 1px solid #f38ba8;
-  border-radius: 8px;
+  border: 1px solid var(--accent-rose);
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
 }
 
 .empty {
-  color: #6c7086;
+  color: var(--text-muted);
   text-align: center;
   padding: 2rem;
+  font-size: 0.85rem;
 }
 </style>
