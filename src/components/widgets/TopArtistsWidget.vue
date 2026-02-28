@@ -1,6 +1,9 @@
 <script setup lang="ts">
+// Vue core: ref for reactive state, computed for derived values, onMounted for lifecycle hook
 import { ref, computed, onMounted } from 'vue'
+// Bar is the chart.js horizontal bar chart component wrapped for Vue
 import { Bar } from 'vue-chartjs'
+// Register only the chart.js modules we need (tree-shakeable)
 import {
   Chart as ChartJS,
   BarElement,
@@ -13,50 +16,58 @@ import {
 } from 'chart.js'
 import { useArtistsStore } from '@/stores/artists'
 
+// Tell chart.js which modules to use — required before rendering any chart
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend)
 
 const store = useArtistsStore()
 
+// The three time-range options shown as tabs in the UI
 const PERIODS = [
   { label: 'Week', value: '7day' },
   { label: 'Month', value: '1month' },
   { label: 'All Time', value: 'overall' },
 ]
 
+// Tracks which tab is currently selected; drives both the active tab style and the API call
 const activePeriod = ref('7day')
 
+// Fetch artists for the default period when the component first renders
 onMounted(() => {
   store.fetchTopArtists(activePeriod.value)
 })
 
+// Called when a tab is clicked — updates the active period and re-fetches from the API
 function selectPeriod(period: string) {
   activePeriod.value = period
   store.fetchTopArtists(period)
 }
 
+// Derives chart-ready data from the store whenever store.artists changes
 const chartData = computed<ChartData<'bar'>>(() => ({
   labels: store.artists.map((a) => a.name),
   datasets: [
     {
       label: 'Play count',
       data: store.artists.map((a) => parseInt(a.playcount, 10) || 0),
+      // Cycles through a palette of brand colors based on bar index
       backgroundColor: (ctx: { dataIndex: number }) => {
         const colors = ['#d4a543', '#c4687a', '#7b6cf6', '#5fa88e', '#d4a543', '#c4687a', '#7b6cf6', '#5fa88e', '#d4a543', '#c4687a']
         return colors[ctx.dataIndex % colors.length]
       },
       borderRadius: 3,
-      borderSkipped: false,
+      borderSkipped: false, // rounds all 4 corners, not just the end cap
       barThickness: 18,
     },
   ],
 }))
 
+// Static chart configuration — layout, axis styling, and tooltip appearance
 const chartOptions = computed<ChartOptions<'bar'>>(() => ({
-  indexAxis: 'y',
+  indexAxis: 'y', // makes bars horizontal (artists on Y axis, play count on X)
   responsive: true,
-  maintainAspectRatio: false,
+  maintainAspectRatio: false, // lets the chart fill its CSS container height
   plugins: {
-    legend: { display: false },
+    legend: { display: false }, // no legend needed — the Y axis labels are self-explanatory
     tooltip: {
       backgroundColor: '#1a1a24',
       titleColor: '#e8e6e1',
@@ -67,6 +78,7 @@ const chartOptions = computed<ChartOptions<'bar'>>(() => ({
       padding: 10,
       titleFont: { family: 'DM Sans' },
       bodyFont: { family: 'DM Sans' },
+      // Formats the tooltip value as "1,234 plays" with locale-aware number formatting
       callbacks: {
         label: (ctx) => ` ${ctx.parsed.x?.toLocaleString() ?? ''} plays`,
       },
@@ -80,7 +92,7 @@ const chartOptions = computed<ChartOptions<'bar'>>(() => ({
     },
     y: {
       ticks: { color: '#e8e6e1', font: { family: 'DM Sans', size: 12 } },
-      grid: { display: false },
+      grid: { display: false }, // no horizontal gridlines — keeps the chart clean
       border: { display: false },
     },
   },
@@ -91,7 +103,10 @@ const chartOptions = computed<ChartOptions<'bar'>>(() => ({
   <div class="widget">
     <div class="widget-header">
       <h2 class="widget-title">Top Artists</h2>
+
+      <!-- Tab group for selecting the time period; role="tablist" for a11y -->
       <div class="period-tabs" role="tablist">
+        <!-- renders one button per PERIODS entry; .active added when it matches activePeriod -->
         <button
           v-for="p in PERIODS"
           :key="p.value"
@@ -105,6 +120,7 @@ const chartOptions = computed<ChartOptions<'bar'>>(() => ({
       </div>
     </div>
 
+    <!-- Mutually exclusive states: only one of these four divs renders at a time -->
     <div v-if="store.loading" class="skeleton" aria-label="Loading top artists..." />
 
     <div v-else-if="store.error" class="error" role="alert">
@@ -113,6 +129,7 @@ const chartOptions = computed<ChartOptions<'bar'>>(() => ({
 
     <div v-else-if="store.artists.length === 0" class="empty">No artist data available.</div>
 
+    <!-- Happy path: pass the computed chart data and options into the Bar component -->
     <div v-else class="chart-container">
       <Bar :data="chartData" :options="chartOptions" />
     </div>

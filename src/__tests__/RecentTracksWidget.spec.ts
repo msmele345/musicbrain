@@ -118,8 +118,8 @@ describe('RecentTracksWidget', () => {
     })
 
     const items = wrapper.findAll('.track-item')
-    expect(items[0].classes()).toContain('now-playing')
-    expect(items[1].classes()).not.toContain('now-playing')
+    expect(items[0]!!.classes()).toContain('now-playing')
+    expect(items[1]!!.classes()).not.toContain('now-playing')
   })
 
   it('calls fetchRecentTracks on mount', async () => {

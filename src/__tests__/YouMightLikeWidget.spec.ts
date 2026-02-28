@@ -85,10 +85,10 @@ describe('YouMightLikeWidget', () => {
     })
 
     const cards = wrapper.findAll('.artist-card')
-    expect(cards[0].find('.artist-name').text()).toBe('Massive Attack')
-    expect(cards[0].find('.artist-match').text()).toBe('87% match')
-    expect(cards[1].find('.artist-name').text()).toBe('Tricky')
-    expect(cards[1].find('.artist-match').text()).toBe('72% match')
+    expect(cards[0]!!.find('.artist-name').text()).toBe('Massive Attack')
+    expect(cards[0]!!.find('.artist-match').text()).toBe('87% match')
+    expect(cards[1]!!.find('.artist-name').text()).toBe('Tricky')
+    expect(cards[1]!!.find('.artist-match').text()).toBe('72% match')
   })
 
   it('links each card to the Last.fm URL with target _blank', () => {
@@ -103,9 +103,9 @@ describe('YouMightLikeWidget', () => {
     })
 
     const cards = wrapper.findAll('.artist-card')
-    expect(cards[0].attributes('href')).toBe('https://last.fm/music/Massive+Attack')
-    expect(cards[0].attributes('target')).toBe('_blank')
-    expect(cards[1].attributes('href')).toBe('https://last.fm/music/Tricky')
+    expect(cards[0]!!.attributes('href')).toBe('https://last.fm/music/Massive+Attack')
+    expect(cards[0]!!.attributes('target')).toBe('_blank')
+    expect(cards[1]!!.attributes('href')).toBe('https://last.fm/music/Tricky')
   })
 
   it('shows artist image when imageUrl is present', () => {
@@ -120,9 +120,9 @@ describe('YouMightLikeWidget', () => {
     })
 
     const cards = wrapper.findAll('.artist-card')
-    expect(cards[0].find('img').exists()).toBe(true)
-    expect(cards[0].find('img').attributes('src')).toBe('https://img.ma.jpg')
-    expect(cards[1].find('.artist-image-placeholder').exists()).toBe(true)
+    expect(cards[0]!!.find('img').exists()).toBe(true)
+    expect(cards[0]!!.find('img').attributes('src')).toBe('https://img.ma.jpg')
+    expect(cards[1]!!.find('.artist-image-placeholder').exists()).toBe(true)
   })
 
   it('calls fetchSuggestedArtists on mount', async () => {

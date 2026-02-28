@@ -14,6 +14,8 @@ const artistsStore = useArtistsStore()
 const recentTracksStore = useRecentTracksStore()
 const discoveryStore = useDiscoveryStore()
 
+//hooks, imports, and all JS in the script setup block
+
 onMounted(() => {
   genresStore.fetchTopGenres()
   artistsStore.fetchTopArtists()
@@ -29,7 +31,7 @@ onMounted(() => {
     <header class="dashboard-header">
       <div class="brand">
         <h1 class="logo">MusicBrain</h1>
-        <span class="tagline">Your listening habits, visualised</span>
+        <span class="tagline">Your brain trends and music, visualised</span>
       </div>
       <div class="header-rule" />
     </header>
