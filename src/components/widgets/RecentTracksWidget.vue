@@ -10,7 +10,6 @@ onMounted(() => {
 
 function relativeTime(timestamp: string | null): string {
   if (!timestamp) return ''
-  // Last.fm date format: "14 Nov 2023, 20:00"
   const parsed = new Date(timestamp.replace(',', ''))
   if (isNaN(parsed.getTime())) return timestamp
   const diffMs = Date.now() - parsed.getTime()
@@ -26,7 +25,10 @@ function relativeTime(timestamp: string | null): string {
 
 <template>
   <div class="widget">
-    <h2 class="widget-title">Recent Tracks</h2>
+    <div class="widget-header">
+      <h2 class="widget-title">Recent Tracks</h2>
+      <span class="widget-label">Live Feed</span>
+    </div>
 
     <div v-if="store.loading" class="skeleton" aria-label="Loading recent tracks..." />
 
@@ -42,13 +44,20 @@ function relativeTime(timestamp: string | null): string {
         :key="index"
         :class="['track-item', { 'now-playing': track.nowPlaying }]"
       >
+        <div class="track-index">
+          <span v-if="track.nowPlaying" class="eq-bars" aria-hidden="true">
+            <span class="eq-bar" />
+            <span class="eq-bar" />
+            <span class="eq-bar" />
+          </span>
+          <span v-else class="index-num">{{ index + 1 }}</span>
+        </div>
         <div class="track-info">
           <div class="track-name">{{ track.name }}</div>
-          <div class="track-meta">{{ track.artist }}<span v-if="track.album"> · {{ track.album }}</span></div>
+          <div class="track-meta">{{ track.artist }}<span v-if="track.album"> &middot; {{ track.album }}</span></div>
         </div>
         <div class="track-right">
           <span v-if="track.nowPlaying" class="now-playing-badge" aria-label="Now playing">
-            <span class="pulse-dot" />
             NOW PLAYING
           </span>
           <span v-else class="track-time">{{ relativeTime(track.timestamp) }}</span>
@@ -60,21 +69,41 @@ function relativeTime(timestamp: string | null): string {
 
 <style scoped>
 .widget {
-  background: #1e1e2e;
-  border-radius: 12px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
   padding: 1.5rem;
-  color: #cdd6f4;
+  color: var(--text-primary);
   min-height: 320px;
+  height: 100%;
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
+.widget-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
 .widget-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #cba6f7;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: var(--text-primary);
   margin: 0;
+}
+
+.widget-label {
+  font-size: 0.65rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent-gold);
+  border: 1px solid var(--border-accent);
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--radius-sm);
 }
 
 .track-list {
@@ -83,41 +112,88 @@ function relativeTime(timestamp: string | null): string {
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 2px;
   overflow-y: auto;
-  max-height: 400px;
+  flex: 1;
 }
 
 .track-item {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0.65rem 0.75rem;
-  border-radius: 8px;
-  background: #181825;
+  padding: 0.6rem 0.75rem;
+  border-radius: var(--radius-md);
   gap: 0.75rem;
+  transition: background 0.2s;
+}
+
+.track-item:hover {
+  background: var(--bg-raised);
 }
 
 .track-item.now-playing {
-  background: #1e1e3a;
-  border: 1px solid #6366f1;
+  background: var(--accent-gold-dim);
+  border-left: 2px solid var(--accent-gold);
+  padding-left: calc(0.75rem - 2px);
+}
+
+.track-index {
+  width: 28px;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.index-num {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.eq-bars {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 2px;
+  height: 14px;
+}
+
+.eq-bar {
+  width: 3px;
+  background: var(--accent-gold);
+  border-radius: 1px;
+  animation: eqBounce 0.8s ease-in-out infinite alternate;
+}
+
+.eq-bar:nth-child(1) { height: 60%; animation-delay: 0s; }
+.eq-bar:nth-child(2) { height: 100%; animation-delay: 0.2s; }
+.eq-bar:nth-child(3) { height: 40%; animation-delay: 0.4s; }
+
+@keyframes eqBounce {
+  0% { transform: scaleY(0.3); }
+  100% { transform: scaleY(1); }
 }
 
 .track-info {
   min-width: 0;
+  flex: 1;
 }
 
 .track-name {
   font-weight: 500;
+  font-size: 0.9rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
+.track-item.now-playing .track-name {
+  color: var(--accent-gold);
+}
+
 .track-meta {
-  font-size: 0.8rem;
-  color: #6c7086;
-  margin-top: 2px;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  margin-top: 1px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -128,40 +204,25 @@ function relativeTime(timestamp: string | null): string {
 }
 
 .now-playing-badge {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: #6366f1;
-  letter-spacing: 0.05em;
-}
-
-.pulse-dot {
-  width: 8px;
-  height: 8px;
-  background: #6366f1;
-  border-radius: 50%;
-  animation: pulse 1.2s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.4; transform: scale(0.7); }
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: var(--accent-gold);
+  letter-spacing: 0.1em;
 }
 
 .track-time {
   font-size: 0.75rem;
-  color: #6c7086;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
 }
 
 .skeleton {
   flex: 1;
   min-height: 260px;
-  background: linear-gradient(90deg, #313244 25%, #45475a 50%, #313244 75%);
+  background: linear-gradient(90deg, var(--bg-raised) 25%, var(--bg-hover) 50%, var(--bg-raised) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 }
 
 @keyframes shimmer {
@@ -170,15 +231,17 @@ function relativeTime(timestamp: string | null): string {
 }
 
 .error {
-  color: #f38ba8;
+  color: var(--accent-rose);
   padding: 1rem;
-  border: 1px solid #f38ba8;
-  border-radius: 8px;
+  border: 1px solid var(--accent-rose);
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
 }
 
 .empty {
-  color: #6c7086;
+  color: var(--text-muted);
   text-align: center;
   padding: 2rem;
+  font-size: 0.85rem;
 }
 </style>

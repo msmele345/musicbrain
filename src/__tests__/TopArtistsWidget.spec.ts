@@ -140,8 +140,8 @@ describe('TopArtistsWidget', () => {
 
     const tabs = wrapper.findAll('[role="tab"]')
     expect(tabs).toHaveLength(3)
-    expect(tabs[0].text()).toBe('Week')
-    expect(tabs[1].text()).toBe('Month')
-    expect(tabs[2].text()).toBe('All Time')
+    expect(tabs[0]!!.text()).toBe('Week')
+    expect(tabs[1]!!.text()).toBe('Month')
+    expect(tabs[2]!!.text()).toBe('All Time')
   })
 })

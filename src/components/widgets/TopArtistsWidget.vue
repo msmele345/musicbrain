@@ -1,6 +1,9 @@
 <script setup lang="ts">
+// Vue core: ref for reactive state, computed for derived values, onMounted for lifecycle hook
 import { ref, computed, onMounted } from 'vue'
+// Bar is the chart.js horizontal bar chart component wrapped for Vue
 import { Bar } from 'vue-chartjs'
+// Register only the chart.js modules we need (tree-shakeable)
 import {
   Chart as ChartJS,
   BarElement,
@@ -13,59 +16,84 @@ import {
 } from 'chart.js'
 import { useArtistsStore } from '@/stores/artists'
 
+// Tell chart.js which modules to use — required before rendering any chart
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend)
 
 const store = useArtistsStore()
 
+// The three time-range options shown as tabs in the UI
 const PERIODS = [
   { label: 'Week', value: '7day' },
   { label: 'Month', value: '1month' },
   { label: 'All Time', value: 'overall' },
 ]
 
+// Tracks which tab is currently selected; drives both the active tab style and the API call
 const activePeriod = ref('7day')
 
+// Fetch artists for the default period when the component first renders
 onMounted(() => {
   store.fetchTopArtists(activePeriod.value)
 })
 
+// Called when a tab is clicked — updates the active period and re-fetches from the API
 function selectPeriod(period: string) {
   activePeriod.value = period
   store.fetchTopArtists(period)
 }
 
+// Derives chart-ready data from the store whenever store.artists changes
 const chartData = computed<ChartData<'bar'>>(() => ({
   labels: store.artists.map((a) => a.name),
   datasets: [
     {
       label: 'Play count',
       data: store.artists.map((a) => parseInt(a.playcount, 10) || 0),
-      backgroundColor: '#6366f1',
-      borderRadius: 4,
+      // Cycles through a palette of brand colors based on bar index
+      backgroundColor: (ctx: { dataIndex: number }) => {
+        const colors = ['#d4a543', '#c4687a', '#7b6cf6', '#5fa88e', '#d4a543', '#c4687a', '#7b6cf6', '#5fa88e', '#d4a543', '#c4687a']
+        return colors[ctx.dataIndex % colors.length]
+      },
+      borderRadius: 3,
+      borderSkipped: false, // rounds all 4 corners, not just the end cap
+      barThickness: 18,
     },
   ],
 }))
 
+// Static chart configuration — layout, axis styling, and tooltip appearance
 const chartOptions = computed<ChartOptions<'bar'>>(() => ({
-  indexAxis: 'y',
+  indexAxis: 'y', // makes bars horizontal (artists on Y axis, play count on X)
   responsive: true,
-  maintainAspectRatio: false,
+  maintainAspectRatio: false, // lets the chart fill its CSS container height
   plugins: {
-    legend: { display: false },
+    legend: { display: false }, // no legend needed — the Y axis labels are self-explanatory
     tooltip: {
+      backgroundColor: '#1a1a24',
+      titleColor: '#e8e6e1',
+      bodyColor: '#8892a4',
+      borderColor: 'rgba(255,255,255,0.06)',
+      borderWidth: 1,
+      cornerRadius: 8,
+      padding: 10,
+      titleFont: { family: 'DM Sans' },
+      bodyFont: { family: 'DM Sans' },
+      // Formats the tooltip value as "1,234 plays" with locale-aware number formatting
       callbacks: {
-        label: (ctx) => ` ${ctx.parsed.x.toLocaleString()} plays`,
+        label: (ctx) => ` ${ctx.parsed.x?.toLocaleString() ?? ''} plays`,
       },
     },
   },
   scales: {
     x: {
-      ticks: { color: '#6c7086' },
-      grid: { color: '#313244' },
+      ticks: { color: '#555d6e', font: { family: 'DM Sans', size: 11 } },
+      grid: { color: 'rgba(255,255,255,0.04)' },
+      border: { display: false },
     },
     y: {
-      ticks: { color: '#cdd6f4' },
-      grid: { display: false },
+      ticks: { color: '#e8e6e1', font: { family: 'DM Sans', size: 12 } },
+      grid: { display: false }, // no horizontal gridlines — keeps the chart clean
+      border: { display: false },
     },
   },
 }))
@@ -75,7 +103,10 @@ const chartOptions = computed<ChartOptions<'bar'>>(() => ({
   <div class="widget">
     <div class="widget-header">
       <h2 class="widget-title">Top Artists</h2>
+
+      <!-- Tab group for selecting the time period; role="tablist" for a11y -->
       <div class="period-tabs" role="tablist">
+        <!-- renders one button per PERIODS entry; .active added when it matches activePeriod -->
         <button
           v-for="p in PERIODS"
           :key="p.value"
@@ -89,6 +120,7 @@ const chartOptions = computed<ChartOptions<'bar'>>(() => ({
       </div>
     </div>
 
+    <!-- Mutually exclusive states: only one of these four divs renders at a time -->
     <div v-if="store.loading" class="skeleton" aria-label="Loading top artists..." />
 
     <div v-else-if="store.error" class="error" role="alert">
@@ -97,6 +129,7 @@ const chartOptions = computed<ChartOptions<'bar'>>(() => ({
 
     <div v-else-if="store.artists.length === 0" class="empty">No artist data available.</div>
 
+    <!-- Happy path: pass the computed chart data and options into the Bar component -->
     <div v-else class="chart-container">
       <Bar :data="chartData" :options="chartOptions" />
     </div>
@@ -105,10 +138,11 @@ const chartOptions = computed<ChartOptions<'bar'>>(() => ({
 
 <style scoped>
 .widget {
-  background: #1e1e2e;
-  border-radius: 12px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
   padding: 1.5rem;
-  color: #cdd6f4;
+  color: var(--text-primary);
   min-height: 320px;
   display: flex;
   flex-direction: column;
@@ -117,40 +151,49 @@ const chartOptions = computed<ChartOptions<'bar'>>(() => ({
 
 .widget-header {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 0.5rem;
 }
 
 .widget-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #cba6f7;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: var(--text-primary);
   margin: 0;
 }
 
 .period-tabs {
   display: flex;
-  gap: 0.25rem;
+  gap: 2px;
+  background: var(--bg-raised);
+  border-radius: var(--radius-sm);
+  padding: 2px;
 }
 
 .tab {
   background: transparent;
-  border: 1px solid #313244;
-  border-radius: 6px;
-  color: #6c7086;
+  border: none;
+  border-radius: 4px;
+  color: var(--text-muted);
   cursor: pointer;
-  font-size: 0.75rem;
-  padding: 0.25rem 0.6rem;
-  transition: all 0.15s;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 500;
+  padding: 0.3rem 0.65rem;
+  transition: all 0.2s;
+  letter-spacing: 0.02em;
 }
 
-.tab.active,
 .tab:hover {
-  background: #313244;
-  border-color: #6366f1;
-  color: #cdd6f4;
+  color: var(--text-secondary);
+}
+
+.tab.active {
+  background: var(--bg-hover);
+  color: var(--accent-gold);
 }
 
 .chart-container {
@@ -162,10 +205,10 @@ const chartOptions = computed<ChartOptions<'bar'>>(() => ({
 .skeleton {
   flex: 1;
   min-height: 260px;
-  background: linear-gradient(90deg, #313244 25%, #45475a 50%, #313244 75%);
+  background: linear-gradient(90deg, var(--bg-raised) 25%, var(--bg-hover) 50%, var(--bg-raised) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 }
 
 @keyframes shimmer {
@@ -174,15 +217,17 @@ const chartOptions = computed<ChartOptions<'bar'>>(() => ({
 }
 
 .error {
-  color: #f38ba8;
+  color: var(--accent-rose);
   padding: 1rem;
-  border: 1px solid #f38ba8;
-  border-radius: 8px;
+  border: 1px solid var(--accent-rose);
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
 }
 
 .empty {
-  color: #6c7086;
+  color: var(--text-muted);
   text-align: center;
   padding: 2rem;
+  font-size: 0.85rem;
 }
 </style>
