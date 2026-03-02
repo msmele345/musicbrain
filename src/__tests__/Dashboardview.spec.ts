@@ -10,7 +10,7 @@ const mockTracks: Track[] = [
     { name: 'Glory Box', artist: 'Portishead', album: 'Dummy', timestamp: '14 Nov 2023, 20:00', nowPlaying: false },
 ]
 
-const bah = vi.fn
+const mockSpy = vi.fn
 
 const renderDashboardView = (
     recentTracks: Track[] = [],
@@ -22,7 +22,7 @@ const renderDashboardView = (
         global: {
             plugins: [
                 createTestingPinia({
-                    createSpy: bah,
+                    createSpy: mockSpy,
                     initialState: {
                         recentTracks: { tracks: recentTracks, loading: false, error: null },
                         artists: { artists: artists, loading: false, error: null },
