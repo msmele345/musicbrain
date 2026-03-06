@@ -1,12 +1,7 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
 import { useRecentTracksStore } from '@/stores/recentTracks'
 
 const store = useRecentTracksStore()
-
-onMounted(() => {
-  store.fetchRecentTracks()
-})
 
 function relativeTime(timestamp: string | null): string {
   if (!timestamp) return ''

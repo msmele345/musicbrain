@@ -1,6 +1,5 @@
 <script setup lang="ts">
-// Vue core: ref for reactive state, computed for derived values, onMounted for lifecycle hook
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 // Bar is the chart.js horizontal bar chart component wrapped for Vue
 import { Bar } from 'vue-chartjs'
 // Register only the chart.js modules we need (tree-shakeable)
@@ -30,11 +29,6 @@ const PERIODS = [
 
 // Tracks which tab is currently selected; drives both the active tab style and the API call
 const activePeriod = ref('7day')
-
-// Fetch artists for the default period when the component first renders
-onMounted(() => {
-  store.fetchTopArtists(activePeriod.value)
-})
 
 // Called when a tab is clicked — updates the active period and re-fetches from the API
 function selectPeriod(period: string) {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed } from 'vue'
 import { Doughnut } from 'vue-chartjs'
 import {
   Chart as ChartJS,
@@ -15,11 +15,6 @@ ChartJS.register(ArcElement, Tooltip, Legend)
 
 const store = useGenresStore()
 
-onMounted(() => {
-  if (store.genres.length === 0) {
-    store.fetchTopGenres()
-  }
-})
 
 const PALETTE = [
   '#d4a543', '#c4687a', '#7b6cf6', '#5fa88e', '#d49a6a',

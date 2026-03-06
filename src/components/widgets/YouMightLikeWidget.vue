@@ -1,12 +1,7 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
 import { useDiscoveryStore } from '@/stores/discovery'
 
 const store = useDiscoveryStore()
-
-onMounted(() => {
-  store.fetchSuggestedArtists()
-})
 
 function matchPercent(match: number): string {
   return `${Math.round(match * 100)}%`

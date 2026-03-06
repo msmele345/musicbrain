@@ -36,10 +36,6 @@ const renderDashboardView = (
 }
 
 describe('dashboard view', () => {
-    beforeEach(() => { 
-
-    });
-
     it('runs tests', () => {
         const wrapper = renderDashboardView(mockTracks);
 

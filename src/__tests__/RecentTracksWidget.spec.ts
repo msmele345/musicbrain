@@ -1,9 +1,8 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { mount, flushPromises } from '@vue/test-utils'
-import { createTestingPinia } from '@pinia/testing'
 import RecentTracksWidget from '@/components/widgets/RecentTracksWidget.vue'
-import { useRecentTracksStore } from '@/stores/recentTracks'
 import type { Track } from '@/services/lastFmApi'
+import { createTestingPinia } from '@pinia/testing'
+import { mount } from '@vue/test-utils'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const mockTracks: Track[] = [
   { name: 'Fake Plastic Trees', artist: 'Radiohead', album: 'The Bends', timestamp: null, nowPlaying: true },
@@ -120,21 +119,5 @@ describe('RecentTracksWidget', () => {
     const items = wrapper.findAll('.track-item')
     expect(items[0]!!.classes()).toContain('now-playing')
     expect(items[1]!!.classes()).not.toContain('now-playing')
-  })
-
-  it('calls fetchRecentTracks on mount', async () => {
-    const wrapper = mount(RecentTracksWidget, {
-      global: {
-        plugins: [
-          createTestingPinia({ createSpy: vi.fn,
-            initialState: { recentTracks: { tracks: [], loading: false, error: null } },
-          }),
-        ],
-      },
-    })
-
-    const store = useRecentTracksStore()
-    await flushPromises()
-    expect(store.fetchRecentTracks).toHaveBeenCalledOnce()
   })
 })

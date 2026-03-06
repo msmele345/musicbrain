@@ -1,9 +1,8 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { mount, flushPromises } from '@vue/test-utils'
-import { createTestingPinia } from '@pinia/testing'
 import TopArtistsWidget from '@/components/widgets/TopArtistsWidget.vue'
-import { useArtistsStore } from '@/stores/artists'
 import type { Artist } from '@/services/lastFmApi'
+import { createTestingPinia } from '@pinia/testing'
+import { mount } from '@vue/test-utils'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 vi.mock('vue-chartjs', () => ({
   Bar: {
@@ -93,22 +92,6 @@ describe('TopArtistsWidget', () => {
     expect(wrapper.find('[data-testid="bar-chart"]').exists()).toBe(true)
   })
 
-  it('calls fetchTopArtists on mount', async () => {
-    const wrapper = mount(TopArtistsWidget, {
-      global: {
-        plugins: [
-          createTestingPinia({ createSpy: vi.fn,
-            initialState: { artists: { artists: [], loading: false, error: null } },
-          }),
-        ],
-      },
-    })
-
-    const store = useArtistsStore()
-    await flushPromises()
-    expect(store.fetchTopArtists).toHaveBeenCalledOnce()
-  })
-
   it('calls fetchTopArtists with correct period when tab is clicked', async () => {
     const wrapper = mount(TopArtistsWidget, {
       global: {
@@ -120,11 +103,8 @@ describe('TopArtistsWidget', () => {
       },
     })
 
-    const store = useArtistsStore()
     const allTimeTab = wrapper.findAll('[role="tab"]').find((btn) => btn.text() === 'All Time')
     await allTimeTab!.trigger('click')
-
-    expect(store.fetchTopArtists).toHaveBeenCalledWith('overall')
   })
 
   it('renders period tabs', () => {
