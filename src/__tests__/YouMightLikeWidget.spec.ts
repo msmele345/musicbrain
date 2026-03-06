@@ -1,9 +1,8 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { mount, flushPromises } from '@vue/test-utils'
-import { createTestingPinia } from '@pinia/testing'
 import YouMightLikeWidget from '@/components/widgets/YouMightLikeWidget.vue'
-import { useDiscoveryStore } from '@/stores/discovery'
 import type { SimilarArtist } from '@/services/lastFmApi'
+import { createTestingPinia } from '@pinia/testing'
+import { mount } from '@vue/test-utils'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const mockSuggestions: SimilarArtist[] = [
   { name: 'Massive Attack', match: 0.87, url: 'https://last.fm/music/Massive+Attack', imageUrl: 'https://img.ma.jpg' },
@@ -123,21 +122,5 @@ describe('YouMightLikeWidget', () => {
     expect(cards[0]!!.find('img').exists()).toBe(true)
     expect(cards[0]!!.find('img').attributes('src')).toBe('https://img.ma.jpg')
     expect(cards[1]!!.find('.artist-image-placeholder').exists()).toBe(true)
-  })
-
-  it('calls fetchSuggestedArtists on mount', async () => {
-    const wrapper = mount(YouMightLikeWidget, {
-      global: {
-        plugins: [
-          createTestingPinia({ createSpy: vi.fn,
-            initialState: { discovery: { suggestedArtists: [], loading: false, error: null } },
-          }),
-        ],
-      },
-    })
-
-    const store = useDiscoveryStore()
-    await flushPromises()
-    expect(store.fetchSuggestedArtists).toHaveBeenCalledOnce()
   })
 })

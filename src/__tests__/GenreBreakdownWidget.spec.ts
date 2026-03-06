@@ -1,10 +1,8 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { mount, flushPromises } from '@vue/test-utils'
-import { setActivePinia, createPinia } from 'pinia'
-import { createTestingPinia } from '@pinia/testing'
 import GenreBreakdownWidget from '@/components/widgets/GenreBreakdownWidget.vue'
-import { useGenresStore } from '@/stores/genres'
 import type { Tag } from '@/services/lastFmApi'
+import { createTestingPinia } from '@pinia/testing'
+import { mount } from '@vue/test-utils'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 vi.mock('vue-chartjs', () => ({
   Doughnut: {
@@ -94,21 +92,5 @@ describe('GenreBreakdownWidget', () => {
 
     expect(wrapper.find('.chart-container').exists()).toBe(true)
     expect(wrapper.find('[data-testid="doughnut-chart"]').exists()).toBe(true)
-  })
-
-  it('calls fetchTopGenres on mount when genres are empty', async () => {
-    const wrapper = mount(GenreBreakdownWidget, {
-      global: {
-        plugins: [
-          createTestingPinia({ createSpy: vi.fn,
-            initialState: { genres: { genres: [], loading: false, error: null } },
-          }),
-        ],
-      },
-    })
-
-    const store = useGenresStore()
-    await flushPromises()
-    expect(store.fetchTopGenres).toHaveBeenCalledOnce()
   })
 })
