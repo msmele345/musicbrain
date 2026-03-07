@@ -17,8 +17,8 @@ const store = useGenresStore()
 
 
 const PALETTE = [
-  '#d4a543', '#c4687a', '#7b6cf6', '#5fa88e', '#d49a6a',
-  '#8892a4', '#b8945f', '#9b6ec4', '#6a9fb5', '#c79a8d',
+  '#00ff6a', '#d45a72', '#8b7cf8', '#00d4ff', '#5fa88e',
+  '#706d6a', '#00cc55', '#a06cd4', '#5a8fa5', '#c4887a',
 ]
 
 const chartData = computed<ChartData<'doughnut'>>(() => ({
@@ -28,8 +28,8 @@ const chartData = computed<ChartData<'doughnut'>>(() => ({
       data: store.genres.map((g) => g.count),
       backgroundColor: store.genres.map((_, i) => PALETTE[i % PALETTE.length]),
       borderWidth: 2,
-      borderColor: '#111118',
-      hoverBorderColor: '#111118',
+      borderColor: '#0c0c10',
+      hoverBorderColor: '#0c0c10',
       hoverBorderWidth: 3,
       hoverOffset: 6,
     },
@@ -44,7 +44,7 @@ const chartOptions = computed<ChartOptions<'doughnut'>>(() => ({
     legend: {
       position: 'right',
       labels: {
-        color: '#8892a4',
+        color: '#706d6a',
         font: { size: 11, family: 'DM Sans' },
         padding: 10,
         usePointStyle: true,
@@ -52,10 +52,10 @@ const chartOptions = computed<ChartOptions<'doughnut'>>(() => ({
       },
     },
     tooltip: {
-      backgroundColor: '#1a1a24',
-      titleColor: '#e8e6e1',
-      bodyColor: '#8892a4',
-      borderColor: 'rgba(255,255,255,0.06)',
+      backgroundColor: '#0c0c10',
+      titleColor: '#ece9e2',
+      bodyColor: '#706d6a',
+      borderColor: 'rgba(255,255,255,0.04)',
       borderWidth: 1,
       cornerRadius: 8,
       padding: 10,
@@ -92,18 +92,19 @@ const chartOptions = computed<ChartOptions<'doughnut'>>(() => ({
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
-  padding: 1.5rem;
+  padding: 1.75rem;
   color: var(--text-primary);
   min-height: 320px;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.25rem;
 }
 
 .widget-title {
   font-family: var(--font-display);
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   font-weight: 400;
+  font-style: italic;
   color: var(--text-primary);
   margin: 0;
 }

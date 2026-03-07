@@ -45,7 +45,7 @@ const chartData = computed<ChartData<'bar'>>(() => ({
       data: store.artists.map((a) => parseInt(a.playcount, 10) || 0),
       // Cycles through a palette of brand colors based on bar index
       backgroundColor: (ctx: { dataIndex: number }) => {
-        const colors = ['#d4a543', '#c4687a', '#7b6cf6', '#5fa88e', '#d4a543', '#c4687a', '#7b6cf6', '#5fa88e', '#d4a543', '#c4687a']
+        const colors = ['#00ff6a', '#d45a72', '#8b7cf8', '#00d4ff', '#5fa88e', '#00ff6a', '#d45a72', '#8b7cf8', '#00d4ff', '#5fa88e']
         return colors[ctx.dataIndex % colors.length]
       },
       borderRadius: 3,
@@ -63,16 +63,15 @@ const chartOptions = computed<ChartOptions<'bar'>>(() => ({
   plugins: {
     legend: { display: false }, // no legend needed — the Y axis labels are self-explanatory
     tooltip: {
-      backgroundColor: '#1a1a24',
-      titleColor: '#e8e6e1',
-      bodyColor: '#8892a4',
-      borderColor: 'rgba(255,255,255,0.06)',
+      backgroundColor: '#0c0c10',
+      titleColor: '#ece9e2',
+      bodyColor: '#706d6a',
+      borderColor: 'rgba(255,255,255,0.04)',
       borderWidth: 1,
       cornerRadius: 8,
-      padding: 10,
+      padding: 12,
       titleFont: { family: 'DM Sans' },
       bodyFont: { family: 'DM Sans' },
-      // Formats the tooltip value as "1,234 plays" with locale-aware number formatting
       callbacks: {
         label: (ctx) => ` ${ctx.parsed.x?.toLocaleString() ?? ''} plays`,
       },
@@ -80,12 +79,12 @@ const chartOptions = computed<ChartOptions<'bar'>>(() => ({
   },
   scales: {
     x: {
-      ticks: { color: '#555d6e', font: { family: 'DM Sans', size: 11 } },
-      grid: { color: 'rgba(255,255,255,0.04)' },
+      ticks: { color: '#3d3b38', font: { family: 'DM Sans', size: 11 } },
+      grid: { color: 'rgba(255,255,255,0.025)' },
       border: { display: false },
     },
     y: {
-      ticks: { color: '#e8e6e1', font: { family: 'DM Sans', size: 12 } },
+      ticks: { color: '#ece9e2', font: { family: 'DM Sans', size: 12 } },
       grid: { display: false }, // no horizontal gridlines — keeps the chart clean
       border: { display: false },
     },
@@ -135,12 +134,12 @@ const chartOptions = computed<ChartOptions<'bar'>>(() => ({
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
-  padding: 1.5rem;
+  padding: 1.75rem;
   color: var(--text-primary);
   min-height: 320px;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.25rem;
 }
 
 .widget-header {
@@ -153,32 +152,33 @@ const chartOptions = computed<ChartOptions<'bar'>>(() => ({
 
 .widget-title {
   font-family: var(--font-display);
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   font-weight: 400;
+  font-style: italic;
   color: var(--text-primary);
   margin: 0;
 }
 
 .period-tabs {
   display: flex;
-  gap: 2px;
-  background: var(--bg-raised);
+  gap: 1px;
+  background: transparent;
   border-radius: var(--radius-sm);
-  padding: 2px;
 }
 
 .tab {
   background: transparent;
-  border: none;
+  border: 1px solid transparent;
   border-radius: 4px;
   color: var(--text-muted);
   cursor: pointer;
   font-family: var(--font-body);
-  font-size: 0.72rem;
+  font-size: 0.65rem;
   font-weight: 500;
-  padding: 0.3rem 0.65rem;
-  transition: all 0.2s;
-  letter-spacing: 0.02em;
+  padding: 0.3rem 0.7rem;
+  transition: color 0.3s, border-color 0.3s;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 .tab:hover {
@@ -186,8 +186,8 @@ const chartOptions = computed<ChartOptions<'bar'>>(() => ({
 }
 
 .tab.active {
-  background: var(--bg-hover);
-  color: var(--accent-gold);
+  color: var(--accent-neon);
+  border-color: var(--border-accent);
 }
 
 .chart-container {
