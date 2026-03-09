@@ -42,7 +42,7 @@ const chartData = computed<ChartData<'bar'>>(() => ({
   datasets: [
     {
       label: 'Play count',
-      data: store.artists.map((a) => parseInt(a.playcount, 10) || 0),
+      data: store.artists.map((a) => Number(a.playcount) || 0),
       // Cycles through a palette of brand colors based on bar index
       backgroundColor: (ctx: { dataIndex: number }) => {
         const colors = ['#00ff6a', '#d45a72', '#8b7cf8', '#00d4ff', '#5fa88e', '#00ff6a', '#d45a72', '#8b7cf8', '#00d4ff', '#5fa88e']
@@ -79,7 +79,12 @@ const chartOptions = computed<ChartOptions<'bar'>>(() => ({
   },
   scales: {
     x: {
-      ticks: { color: '#3d3b38', font: { family: 'DM Sans', size: 11 } },
+      beginAtZero: true,
+      ticks: {
+        color: '#3d3b38',
+        font: { family: 'DM Sans', size: 11 },
+        precision: 0,
+      },
       grid: { color: 'rgba(255,255,255,0.025)' },
       border: { display: false },
     },
